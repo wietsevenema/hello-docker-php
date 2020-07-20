@@ -2,6 +2,7 @@ FROM composer AS builder
 
 WORKDIR /workspace
 
+# Best practices dictate to add composer.lock as well
 COPY composer.json /workspace
 
 RUN composer install
@@ -12,8 +13,6 @@ FROM php:7.4-apache
 RUN pecl install redis-5.3.1 \
     && docker-php-ext-enable redis 
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
-
-ENV NAME="[your name here]"
 
 COPY html/ /var/www/html/ 
 

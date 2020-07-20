@@ -6,7 +6,7 @@
     </head>
     <body>
         <h1>My Products</h1>
-        Products selected {{ name }}
+        A random selection
         <div class="container">
             {% for product in products %}
             <div class="item" onclick="document.location='?add={{product.name|url_encode}}'">

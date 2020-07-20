@@ -11,7 +11,7 @@ services:
       - REDIS_URL=tcp://redis:6379
       - DEBUG=true
   redis:
-    image: redis
+    image: docker.io/library/redis
   products:
     image: "gcr.io/cloud-run-book/product"
     environment:
