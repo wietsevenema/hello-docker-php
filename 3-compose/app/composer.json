@@ -1,0 +1,10 @@
+{
+  "require": {
+    "php": "^7.4",
+    "twig/twig": "^3.0",
+    "guzzlehttp/guzzle": "^7.0"
+  },
+  "config": {
+    "classmap-authoritative": true
+  }
+}

@@ -1,0 +1,18 @@
+version: '3'
+services:
+  app:
+    build: app
+    ports:
+      - "8080:80"
+    volumes:
+      - ./app/html:/var/www/html
+    environment: 
+      - PRODUCTS_URL=http://products:8080
+      - REDIS_URL=tcp://redis:6379
+      - DEBUG=true
+  redis:
+    image: redis
+  products:
+    image: "gcr.io/cloud-run-book/product"
+    environment:
+      - PORT=8080

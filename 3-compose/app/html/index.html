@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>My Mollie World</title>
+        <link rel="stylesheet" type="text/css" href="index.css" media="screen" />
+    </head>
+    <body>
+        <h1>My Products</h1>
+        Products selected {{ name }}
+        <div class="container">
+            {% for product in products %}
+            <div class="item" onclick="document.location='?add={{product.name|url_encode}}'">
+                <img src="{{product.image}}" />                
+            </div>
+            {% endfor %}           
+        </div>
+
+        <h2>Your Cart</h2>
+        {% if cart %}
+        <ul>            
+        {% for product in cart %}
+            <li>{{product}}</li>
+        {% endfor %}
+        </ul>
+        <a href="?clear=true">Clear cart</a>
+        {% else %}
+        Click on a product to add to cart
+        {% endif %}
+    </body>
+</html>
