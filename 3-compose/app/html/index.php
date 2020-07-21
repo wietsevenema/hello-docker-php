@@ -2,29 +2,28 @@
 require_once(__DIR__ . '/../vendor/autoload.php');
 
 /*
- * Warning: 
- *
- * This is just to demonstrate
- *  - Redis for sessions
+ * This is a script to demonstrate
+ * 
+ *  - Using Redis for sessions.
  *  - Calling a service.
  *
- * I don't know what I am doing. 
- * Please write better PHP in production
+ * In a real app you might want to use a framework.
  */
 
-// Set up session 
+// REDIS: Set up session storage in redis.
 ini_set("session.save_handler","redis");
-
 $redis_url = getenv('REDIS_URL', true);
 ini_set("session.save_path", "$redis_url?timeout=1&persistent=1");
 
 $session = session_start();
-// If you don't check this return you will get a (silent) warning.
+// If you don't check this return 
+// you will get a (silent) warning.
 if (!$session){ 
-  throw new Exception("SESSION FAILED");
+  throw new Exception("Failed to store sessions in Redis");
 }
 
-// Add to cart insecurely 
+// Add to cart insecurely (don't use GET
+// to change user state)
 if( isset($_GET['add']) ){
   $_SESSION['cart'] = isset($_SESSION['cart']) ? $_SESSION['cart'] : [];
   array_push($_SESSION['cart'], htmlspecialchars($_GET['add'], ENT_NOQUOTES));
@@ -32,6 +31,7 @@ if( isset($_GET['add']) ){
   exit();
 }
 
+// Clear cart insecurely 
 if( isset($_GET['clear']) ){
   $_SESSION['cart'] = [];
   header("Location: /");
@@ -45,11 +45,20 @@ $twig = new \Twig\Environment($loader, [
   'debug' => getenv('DEBUG', true)
 ]);
 
-// Load products
-$client = new GuzzleHttp\Client(); // FIXME Add timeout (default is unlimited)
+// CALLING A SERVICE: Load 10 random products
+$client = new GuzzleHttp\Client([
+  // Set time-out, default is to wait forever
+  'connect_timeout' => .1, 
+  'read_timeout' => .5
+]); 
 $product_url = getenv('PRODUCTS_URL', true);
 $response = $client->get("$product_url/random");
-$products = json_decode($response->getBody(), false, 512, JSON_THROW_ON_ERROR);
+$products = json_decode(
+  $response->getBody(), 
+  false, 
+  10, 
+  JSON_THROW_ON_ERROR // If you do not set this, it won't error
+);
 
 // Render template
 echo $twig->render('index.html', [
